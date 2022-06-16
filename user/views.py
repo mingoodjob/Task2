@@ -1,5 +1,4 @@
 from django.contrib.auth import login, logout, authenticate
-from requests import delete
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -32,22 +31,5 @@ class UserApiView(APIView):
         logout(request)
         
 
-class UserPostView(APIView):
-    """
 
-    """
-    def get(self, request):
-        posts = []
-        username = UserModel.objects.get(username=request.user)
-        articles = Article.objects.filter(author=username)
-        for article in articles:
-            titles = {
-                'author': article.author.username,
-                'title': article.title,
-                'content': article.content,
-                'category': article.category.name,
-                'date': article.date
-            }
-            posts.append(titles)
-        return Response({'post': posts})
     
