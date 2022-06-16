@@ -19,7 +19,6 @@ class UserPostView(APIView):
                 'author': article.author.username,
                 'title': article.title,
                 'content': article.content,
-                'category': article.category.name,
                 'date': article.date
             }
             posts.append(titles)
