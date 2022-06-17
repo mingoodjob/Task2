@@ -30,8 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
         userprofile = UserProfileSerializer()
         # user = serializers.SerializerMethodField()
 
-        
-        
         class Meta:
                 # serializer에 사용될 model, field지정
                 model = UserModel

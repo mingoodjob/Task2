@@ -18,9 +18,6 @@ class UserApiView(APIView):
     
     def get(self, request):
         user = request.user
-        userd = UserModel.objects.get(username=user)
-        article = Article.objects.filter(author=userd)
-        print(dir(article))
         user_data = UserSerializer(user).data
         return Response(user_data)
  

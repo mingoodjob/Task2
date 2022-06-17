@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from blog.models import Category, Article, Comment
 from user.models import UserModel
 from config.permission import RegistedMoreThanAWeekUser
+from user.serializers import ArticleSerializer
 
 # Create your views here.
 class UserPostView(APIView):
@@ -13,18 +14,8 @@ class UserPostView(APIView):
 
     """
     def get(self, request):
-        posts = []
-        username = UserModel.objects.get(username=request.user)
-        articles = Article.objects.filter(author=username)
-        for article in articles:
-            titles = {
-                'author': article.author.username,
-                'title': article.title,
-                'content': article.content,
-                'date': article.date
-            }
-            posts.append(titles)
-        return Response({'post': posts})
+        article_data = ArticleSerializer(Article.objects.filter(author=request.user), many=True).data
+        return Response(article_data)
 
     def post(self, request):
         title = request.data.get('title')
