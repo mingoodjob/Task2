@@ -16,5 +16,11 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
-
+class Comment(models.Model):
+    author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    content = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.content
 

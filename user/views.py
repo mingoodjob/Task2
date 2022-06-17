@@ -4,6 +4,8 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from blog.models import Category, Article 
 from user.models import UserModel
+from user.serializers import UserSerializer,ArticleSerializer
+
 
 class UserApiView(APIView):
     """
@@ -15,7 +17,12 @@ class UserApiView(APIView):
     """
     
     def get(self, request):
-        return Response({'message': '겟!'})
+        user = request.user
+        userd = UserModel.objects.get(username=user)
+        article = Article.objects.filter(author=userd)
+        print(dir(article))
+        user_data = UserSerializer(user).data
+        return Response(user_data)
  
     def post(self, request):
         username = request.data.get('username')
