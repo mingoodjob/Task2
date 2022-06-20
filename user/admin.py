@@ -1,3 +1,5 @@
+from tabnanny import verbose
+from unicodedata import name
 from django.contrib import admin
 from user.models import UserModel, UserProfile, Hobby
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -33,5 +35,5 @@ class UserAdmin(BaseUserAdmin):
     ]
 
 admin.site.register(UserModel, UserAdmin)
-admin.site.register(UserProfile)
+# admin.site.register(UserProfile)
 admin.site.register(Hobby)

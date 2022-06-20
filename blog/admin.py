@@ -17,7 +17,8 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content', 'author', )
 
     fieldsets = (
-        ("정보", {'fields': ('title', 'author', 'content')}),
+        ("정보", {'fields': ('title', 'author',)}),
+        ("내용", {'fields': ('content',)}),
         ("카테고리", {'fields': ('category', )}),
         ("노출시간", {'fields': ('exposure_start','exposure_end', )}),
         )
