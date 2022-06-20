@@ -65,13 +65,20 @@ class UserModel(AbstractBaseUser):
     def is_staff(self): 
         return self.is_admin
 
+class Hobby(models.Model):
+    name = models.CharField("취미명", max_length=20)
+
+    def __str__(self):
+        return self.name
 
 class UserProfile(models.Model):
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
     nickname = models.CharField("닉네임", max_length=20, blank=True)
     phone = models.CharField("전화번호", max_length=20, blank=True)
     address = models.CharField("주소", max_length=100, blank=True)
-    hobby = models.CharField("취미", max_length=100, blank=True)
+    hobby = models.ManyToManyField(Hobby, blank=True)
 
     def __str__(self):
         return self.nickname
+        
+
