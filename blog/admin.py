@@ -36,6 +36,5 @@ class ArticleAdmin(admin.ModelAdmin):
         else:
             return ('date',)
 
-    
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Article, ArticleAdmin)
