@@ -37,11 +37,11 @@ class AdminWritePermission(BasePermission):
             }    
             raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, response=response)
 
-        if user.is_authenticated in self.SAFE_METHODS:
+        if user.is_authenticated and self.SAFE_METHODS:
             return True
         
         elif user.is_authenticated and user.is_admin and user.join_date < (timezone.now() - timedelta(minutes=60*24*3)):
             return True
 
 
-        return bool(request.user and request.user.is_admin or request.user.join_date < (timezone.now() - timedelta(minutes=60*24*7)))
+        # return bool(request.user and request.user.is_admin or request.user.join_date < (timezone.now() - timedelta(minutes=60*24*7)))
