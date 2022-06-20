@@ -37,7 +37,7 @@ class AdminWritePermission(BasePermission):
             }    
             raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, detail=response)
 
-        elif user.is_authenticated and request.method in  self.SAFE_METHODS:
+        elif user.is_authenticated and request.method in self.SAFE_METHODS:
             print(user.username)
             print(self.SAFE_METHODS)
             return True
