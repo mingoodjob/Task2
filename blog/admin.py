@@ -2,6 +2,9 @@ from django.contrib import admin
 from blog.models import Category, Article, Comment
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 1
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id','name',)
@@ -23,6 +26,8 @@ class ArticleAdmin(admin.ModelAdmin):
         ("노출시간", {'fields': ('exposure_start','exposure_end', )}),
         )
 
+    inlines = [CommentInline,]
+
     filter_horizontal = ['category',]
 
     def get_readonly_fields(self, request, obj=None):
@@ -31,6 +36,6 @@ class ArticleAdmin(admin.ModelAdmin):
         else:
             return ('date',)
 
+    
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Comment)

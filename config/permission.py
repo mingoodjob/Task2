@@ -1,5 +1,4 @@
 from urllib import response
-from grpc import StatusCode
 from rest_framework.permissions import BasePermission
 from datetime import timedelta
 from django.utils import timezone
