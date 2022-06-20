@@ -24,23 +24,30 @@ class AdminWritePermission(BasePermission):
     """
     관리자 및 가입일 기준 1주일 이상 지난 사용자만 접근 가능
     """
-    SAFE_METHODS = ['GET',]
+    SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
 
     message = '관리자 혹은 가입일이 7일이상인 유저만 접근 가능 합니다.'
         
     def has_permission(self, request, view):
         user = request.user
 
-        if not user:
+        if not user.is_authenticated:
             response = {
                 'message': '로그인이 필요합니다.'
             }    
-            raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, response=response)
+            raise GenericAPIException(status_code=status.HTTP_401_UNAUTHORIZED, detail=response)
 
-        if user.is_authenticated and self.SAFE_METHODS:
+        elif user.is_authenticated and request.method in  self.SAFE_METHODS:
+            print(user.username)
+            print(self.SAFE_METHODS)
             return True
         
-        elif user.is_authenticated and user.is_admin and user.join_date < (timezone.now() - timedelta(minutes=60*24*3)):
+        elif user.is_authenticated and user.join_date < (timezone.now() - timedelta(minutes=60*24*7)):
+            print(user.join_date)
+            print(timezone.now() - timedelta(minutes=60*24*7))
+            return True
+        
+        elif user.is_authenticated and user.is_admin:
             return True
 
 

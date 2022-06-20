@@ -37,7 +37,6 @@ class UserPostView(APIView):
             return Response({'message': '카테고리를 선택해주세요.'})
 
         article = Article(title=title, content=content, author=request.user, exposure_start=exposure_start, exposure_end=exposure_end)
-        category = request.data.pop('category')
         article.save()
         article.category.add(*category)
         
