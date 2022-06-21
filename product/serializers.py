@@ -14,7 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
         instance.thumnail = validated_data.get('thumnail', instance.thumnail)
         instance.save()
         return instance
-    
+
     class Meta:
         model = ProductModel
         fields = ["author", "title", "desc", "thumnail", "created_at", "updated_at", "exposure_start", "exposure_end"]

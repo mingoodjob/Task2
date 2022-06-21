@@ -4,14 +4,13 @@ from product.models import ProductModel
 from product.serializers import ProductSerializer
 from user.models import UserModel
 from rest_framework import status
+from datetime import datetime
 
 # Create your views here.
 class ProductView(APIView):
     def get(self, request):
-        
-        products = ProductModel.objects.all()
+        products = ProductModel.objects.filter(exposure_start__lte=datetime.now(), exposure_end__gte=datetime.now()).filter(author=request.user.id)
         serializer = ProductSerializer(products, many=True).data
-        
         return Response(serializer)
 
     def post(self, request):
