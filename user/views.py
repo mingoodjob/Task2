@@ -42,10 +42,8 @@ class UserSignUpView(APIView):
     SignUp API 요청시 사용되는 함수
     """
     def post(self, request):
-        
         password = request.data.pop('password')
         user = UserModel.objects.create(**request.data)
         user.set_password(password)
         user.save()
-        
         return Response({'message': '회원가입 성공'})
