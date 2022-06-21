@@ -1,5 +1,3 @@
-from tabnanny import verbose
-from unicodedata import name
 from django.contrib import admin
 from user.models import UserModel, UserProfile, Hobby
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -25,7 +23,7 @@ class UserAdmin(BaseUserAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return ('username', 'join_date', 'fullname',)
+            return ('username', 'join_date',)
         else:
             return ('join_date', )
 
