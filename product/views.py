@@ -4,12 +4,15 @@ from product.models import ProductModel
 from product.serializers import ProductSerializer
 from user.models import UserModel
 from rest_framework import status
+from django.db.models.query_utils import Q
 from datetime import datetime
+
 
 # Create your views here.
 class ProductView(APIView):
     def get(self, request):
-        products = ProductModel.objects.filter(exposure_start__lte=datetime.now(), exposure_end__gte=datetime.now()).filter(author=request.user.id)
+        products = Q(exposure_start__lte=datetime.now()) & Q(exposure_end__gte=datetime.now()) & Q(author=request.user)
+        products = ProductModel.objects.filter(products)
         serializer = ProductSerializer(products, many=True).data
         return Response(serializer)
 
