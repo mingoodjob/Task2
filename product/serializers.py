@@ -1,23 +1,62 @@
 from rest_framework import serializers
-from user.models import UserModel,UserProfile, Hobby
-from blog.models import Category, Article, Comment
-from blog.serializers import ArticleSerializer
-from product.models import ProductModel
+from product.models import ProductModel, ReviewModel
+from datetime import datetime, timezone
+from dateutil.tz import gettz
+from django.db.models import Avg
+
+TODAY = datetime.now(gettz('Asia/Seoul'))
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewModel
+        fields = ["product", "content", "rating"]
 
 class ProductSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        # custom validation pattern
+        if data.get('exposure_end') < TODAY:
+            raise serializers.ValidationError(
+                detail={"error": "종료 일자가 현재 일자보다 이전입니다."},
+                )
+
+        return data  
+
     def create(self, validated_data):
+        validated_data['desc'] = validated_data['desc'] + f'\n생성시간 {TODAY} 생성된 상품입니다.'
         return ProductModel.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.title = validated_data.get('title', instance.title)
-        instance.desc = validated_data.get('desc', instance.desc)
-        instance.thumnail = validated_data.get('thumnail', instance.thumnail)
+        validated_data['desc'] = validated_data['desc'] + f'\n업데이트시간 {TODAY} 업데이트된 상품입니다.'
+        for key, value in validated_data.items():
+            # if key == "desc":
+            #     continue
+            setattr(instance, key, value)
         instance.save()
         return instance
 
+    # review = ReviewSerializer(many=True, source='reviewmodel_set', read_only=True)
+    reviews = serializers.SerializerMethodField()
+    rating_avg = serializers.SerializerMethodField()
+
+    def get_rating_avg(self, obj):
+        return obj.reviewmodel_set.all().aggregate(avg=Avg('rating'))['avg']
+
+    def get_reviews(self, obj):
+        reviews_data = []
+        for review in obj.reviewmodel_set.all():
+            review_data = {
+                "product_id" : review.product.id,
+                "product_title" : review.product.title,
+                "review_content" : review.content,
+                "review_rating" : review.rating,
+            }
+            reviews_data.append(review_data)
+        return reviews_data
+        
     class Meta:
+        
         model = ProductModel
-        fields = ["author", "title", "desc", "thumnail", "created_at", "updated_at", "exposure_start", "exposure_end"]
+        fields = ["author", "title", "desc", "price", "thumnail", "created_at", "updated_at", "rating_avg", "exposure_start", "exposure_end", "reviews"]
 
         extra_kwargs = {
             # write_only : 해당 필드를 쓰기 전용으로 만들어 준다.

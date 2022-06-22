@@ -26,7 +26,7 @@ class AdminWritePermission(BasePermission):
     """
     SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
 
-    message = '관리자 혹은 가입일이 7일이상인 유저만 접근 가능 합니다.'
+    message = '관리자 혹은 가입일이 3일이상인 유저만 접근 가능 합니다.'
         
     def has_permission(self, request, view):
         user = request.user
@@ -40,7 +40,7 @@ class AdminWritePermission(BasePermission):
         elif user.is_authenticated and request.method in self.SAFE_METHODS:
             return True
         
-        elif user.is_authenticated and user.join_date < (timezone.now() - timedelta(minutes=60*24*7)):
+        elif user.is_authenticated and user.join_date < (timezone.now() - timedelta(minutes=60*24*3)):
             return True
         
         elif user.is_authenticated and user.is_admin:

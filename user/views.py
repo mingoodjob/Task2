@@ -1,12 +1,15 @@
-from functools import partial
 from venv import create
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.views import APIView
-from blog.models import Category, Article 
-from user.models import UserModel, UserProfile
-from user.serializers import UserSerializer,ArticleSerializer, UserProfileSerializer
+from user.models import UserModel
+from user.serializers import UserSerializer
+from product.models import ProductModel
+from product.serializers import ProductSerializer
+from django.db.models.query_utils import Q
+from datetime import datetime
+
 
 class UserApiView(APIView):
     """
@@ -19,6 +22,7 @@ class UserApiView(APIView):
     
     def get(self, request):
         user = request.user
+        user = UserModel.objects.get(id=user.id)
         user_data = UserSerializer(user).data
         return Response(user_data)
  
@@ -41,25 +45,9 @@ class UserSignUpView(APIView):
     """
     SignUp API 요청시 사용되는 함수
     """
-    # def post(self, request):
-    #     password = request.POST.get('password')
-    #     user = UserModel.objects.create(**request.POST.dict())
-    #     user.set_password(password)
-    #     user.save()
-    #     return Response({'message': '회원가입 성공'})
-
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': '회원가입 성공'})
-        return Response(serializer.errors)
-
-    def put(self, request):
-        user = UserProfile.objects.get(user=request.user.id)
-        serializer = UserProfileSerializer(user, data=request.data, partial=True)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        password = request.data.pop('password')
+        user = UserModel.objects.create(**request.data)
+        user.set_password(password)
+        user.save()
+        return Response({'message': '회원가입 성공'})
