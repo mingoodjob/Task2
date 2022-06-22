@@ -9,7 +9,7 @@ TODAY = datetime.now(gettz('Asia/Seoul'))
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewModel
-        fields = ["product", "content", "rating"]
+        fields = ["id", "product", "content", "rating"]
 
 class ProductSerializer(serializers.ModelSerializer):
     def validate(self, data):

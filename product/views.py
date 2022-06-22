@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from product.models import ProductModel
-from product.serializers import ProductSerializer
+from product.models import ProductModel, ReviewModel
+from product.serializers import ProductSerializer, ReviewSerializer
 from user.models import UserModel
 from rest_framework import status
 from config.permission import AdminWritePermission
@@ -19,12 +19,8 @@ class ProductView(APIView):
         return Response(serializer)
 
     def post(self, request):
-        try:
-            author = UserModel.objects.get(id=request.user.id)
-            request.data['author'] = author.id
-        except UserModel.DoesNotExist:
-            return Response({'message': '로그인후 이용이 가능합니다.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        author = UserModel.objects.get(id=request.user.id)
+        request.data['author'] = author.id
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -38,3 +34,11 @@ class ProductView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ReviewView(APIView):
+    permission_classes = [AdminWritePermission]
+
+    def get(self, request, id):
+        reviews = ReviewModel.objects.filter(product_id=id)
+        serializer = ReviewSerializer(reviews, many=True).data
+        return Response(serializer)
